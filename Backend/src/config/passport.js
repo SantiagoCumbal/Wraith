@@ -60,12 +60,16 @@ passport.use(new FacebookStrategy({
     let user = await Jugadores.findOne({ avatarJugadorID: profile.id });
     if (user) return done(null, user);
 
+    // Encriptar la palabra "google"
+    const salt = await bcrypt.genSalt(10);
+    const passwordEncriptada = await bcrypt.hash("facebook", salt);
+
     user = await Jugadores.create({
       username: profile.displayName,
       email: profile.emails?.[0]?.value || 'sinemail@facebook.com',
       nombre: profile.name?.givenName || '',
       apellido: profile.name?.familyName || '',
-      password: 'facebook',
+      password: passwordEncriptada,
       avatarJugadorID: profile.id,
       avatarJugador: profile.photos && profile.photos[0].value 
     });
