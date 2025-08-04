@@ -7,70 +7,57 @@ import fs from "fs-extra"
 import { Stripe } from "stripe"
 const stripe = new Stripe(`${process.env.STRIPE_PRIVATE_KEY}`)
 
-const registro = async (req, res) => {
-  try {
-    // Verificar que req.body exista
-    if (!req.body) {
-      return res.status(400).json({ msg: "No se enviaron datos en el formulario" });
-    }
+const registro = async (req,res)=>{
+    const {email,password} = req.body
 
-    const { email, password } = req.body;
-
-    // Validar campos vacíos
-    if (!email || !password) {
-      return res.status(400).json({
-        msg: "Lo sentimos, debes llenar todos los campos"
-      });
-    }
+    if (Object.values(req.body).includes("")) return res.status(400).json({
+        msg:"Lo sentimos, debes llenar todos los campos"
+    })
 
     const verificarEmailBDD = await Jugadores.findOne({ email });
     if (verificarEmailBDD) {
-      return res.status(400).json({
-        msg: "Lo sentimos, el email ya se encuentra registrado"
-      });
-    }
-
-    const nuevojugador = new Jugadores(req.body);
-
-    // Subir imagen normal
-    if (req.files?.imagen) {
-      const { secure_url, public_id } = await cloudinary.uploader.upload(
-        req.files.imagen.tempFilePath,
-        { folder: 'Jugadores' }
-      );
-      nuevojugador.avatarJugador = secure_url;
-      nuevojugador.avatarJugadorID = public_id;
-      await fs.unlink(req.files.imagen.tempFilePath);
-    }
-
-    // Subir imagen IA (base64)
-    if (req.body?.avatarJugadorIA) {
-      const base64Data = req.body.avatarJugadorIA.replace(/^data:image\/\w+;base64,/, '');
-      const buffer = Buffer.from(base64Data, 'base64');
-      const { secure_url } = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: 'Jugadores', resource_type: 'auto' },
-          (error, response) => error ? reject(error) : resolve(response)
+        return res.status(400).json(
+            { msg: "Lo sentimos, el email ya se encuentra registrado" }
         );
-        stream.end(buffer);
-      });
-      nuevojugador.avatarJugadorIA = secure_url;
     }
 
-    nuevojugador.password = await nuevojugador.encrypPassword(password);
-    const token = nuevojugador.crearToken();
+    //Imagenes
+    const nuevojugador = new Jugadores(req.body)
 
-    await sendMailToRegister(email, token);
-    await nuevojugador.save();
+    if(req.files?.imagen){
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.files.imagen.tempFilePath,{folder:'Jugadores'})
+        nuevojugador.avatarJugador = secure_url
+        nuevojugador.avatarJugadorID = public_id
+        await fs.unlink(req.files.imagen.tempFilePath)
+    }
 
-    res.status(200).json({
-      msg: "Revisa tu correo electrónico para confirmar tu cuenta"
-    });
-  } catch (error) {
-    console.error("Error en registro:", error.message);
-    res.status(500).json({ msg: "Error interno del servidor" });
-  }
-};
+    if (req.body?.avatarJugadorIA) {
+        const base64Data = req.body.avatarJugadorIA.replace(/^data:image\/\w+;base64,/, '')
+        const buffer = Buffer.from(base64Data, 'base64')
+        const { secure_url } = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream({ folder: 'Jugadores', resource_type: 'auto' }, (error, response) => {
+                if (error) {
+                    reject(error)
+                } else {
+                    resolve(response)
+                }
+            })
+            stream.end(buffer)
+        })
+            nuevojugador.avatarJugadorIA = secure_url
+    }
+
+    nuevojugador.password = await nuevojugador.encrypPassword(password)
+
+    const token = nuevojugador.crearToken()
+    await sendMailToRegister(email,token)
+
+
+    await nuevojugador.save()
+    res.status(200).json(
+        {msg:"Revisa tu correo electrónico para confirmar tu cuenta"}
+    )
+}
 
 const confirmarEmail = async (req,res)=>{
     if(!(req.params.token)) 
