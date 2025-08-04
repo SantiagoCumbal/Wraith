@@ -11,6 +11,11 @@ router.get('/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: '/' }),
   (req, res) => {
     const jugador = req.user;
+
+    if (jugador.status === false) {
+      return res.status(403).json({ msg: "Cuenta suspendida por mal comportamiento" });
+    }
+
     const token = crearTokenJWT(jugador._id, jugador.rol);
     res.status(200).json({
       token,
@@ -30,7 +35,12 @@ router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }))
 router.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
   (req, res) => {
-    const jugador = req.user;
+    const jugador = req.user
+
+    if (jugador.status === false) {
+      return res.status(403).json({ msg: "Cuenta suspendida por mal comportamiento" });
+    }
+    
     const token = crearTokenJWT(jugador._id, jugador.rol);
     res.status(200).json({
       token,
