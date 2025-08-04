@@ -57,11 +57,11 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'displayName', 'email', 'name', 'photos'],
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    let user = await Jugadores.findOne({ providerId: profile.id });
+    let user = await Jugadores.findOne({ avatarJugadorID: profile.id });
     if (user) return done(null, user);
 
     user = await Jugadores.create({
-      name: profile.displayName,
+      username: profile.displayName,
       email: profile.emails?.[0]?.value || 'sinemail@facebook.com',
       nombre: profile.name?.givenName || '',
       apellido: profile.name?.familyName || '',
