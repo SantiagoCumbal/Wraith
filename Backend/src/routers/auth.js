@@ -29,7 +29,18 @@ router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }))
 
 router.get('/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/' }),
-  (req, res) => res.redirect('/dashboard')
+  (req, res) => {
+    const jugador = req.user;
+    const token = crearTokenJWT(jugador._id, jugador.rol);
+    res.status(200).json({
+      token,
+      nombre: jugador.nombre,
+      apellido: jugador.apellido,
+      username: jugador.username,
+      _id: jugador._id,
+      email: jugador.email
+    });
+  }
 );
 
 // Cerrar sesión
