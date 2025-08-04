@@ -22,45 +22,46 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
-// Configuraciones generales
-app.use(cors());
 
-// Para interpretar bodies JSON y formularios urlencoded
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Middleware para manejar uploads con archivos temporales
 app.use(fileUpload({
     useTempFiles : true,
-    tempFileDir : '/tmp'   
-}));
+    tempFileDir : './uploads'
+}))
+
 
 app.use(session({
     secret: process.env.MONGODB_ATLAS, 
     saveUninitialized: false
 }));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configuraciones adicionales
-app.set('port', process.env.PORT || 3000);
+//Configuraciones
+app.set('port', process.env.PORT || 3000) 
+//app.set('port', process.env.CLOUDINARY || 3000) //process es paara datos sensibles
+app.use(cors())
 
-// Rutas básicas
-app.get('/', (req, res) => {
-    res.send("Server on");
-});
+//MiddLewares
+app.use(express.json()) //guarda la informacion del frontend en un archivo json para procesar el backend
 
-// Rutas para administradores
-app.use('/api', routerAdministrador);
+
+// Rutas 
+app.get('/',(req,res)=>{
+    res.send("Server on")
+})
+
+//Rutas para administradores
+app.use('/api',routerAdministrador)
 
 // Rutas para jugadores
-app.use('/api', routerJugadores);
+app.use('/api',routerJugadores)
 
-// Rutas para los chats
-app.use('/api', routerChat);
+//Ruta para los chats
+app.use('/api', routerChat)
 
-// Rutas de autenticación
+// Rutas
 app.use('/auth', authRoutes);
 
 app.get('/prueba', (req, res) => {
@@ -73,9 +74,9 @@ app.get('/dashboard', (req, res) => {
 });
 
 // Manejo de una ruta que no sea encontrada
-app.use((req,res) => res.status(404).send("Endpoint no encontrado - 404"));
+app.use((req,res)=>res.status(404).send("Endpoint no encontrado - 404"))
 
 //Exportar la instancia
-export default app;
+export default app
 
 //EL uso del archivo no es muy usado pero es necesario
