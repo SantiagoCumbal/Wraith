@@ -64,12 +64,12 @@ app.use('/api', routerChat)
 // Rutas
 app.use('/auth', authRoutes);
 
-app.get('/google/prueba', (req, res) => {
+app.get('/prueba', (req, res) => {
     res.send('<h2>Inicio</h2><a href="/auth/google">Google</a> | <a href="/auth/facebook">Facebook</a>');
 });
 
 app.get('/dashboard', (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/google/prueba');
+    if (!req.isAuthenticated()) return res.redirect('/prueba');
     res.send(`<h2>Hola, ${req.user.name}</h2><a href="/auth/logout">Salir</a>`);
 });
 
