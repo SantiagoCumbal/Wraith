@@ -6,10 +6,16 @@ import routerAdministrador from './routers/Administrador_routes.js'
 import routerChat from './routers/Mensaje_routes.js'
 import cloudinary from 'cloudinary'
 import fileUpload from "express-fileupload"
+import fs from "fs"; 
 import session from "express-session";
 import passport from "passport";
 import authRoutes from "./routers/auth.js"
 import './config/passport.js';
+
+const tempDir = './uploads';
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+}
 
 //Inicializaciones
 const app = express()
