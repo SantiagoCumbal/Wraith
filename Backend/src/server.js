@@ -12,11 +12,6 @@ import passport from "passport";
 import authRoutes from "./routers/auth.js"
 import './config/passport.js';
 
-const tempDir = './uploads';
-if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
-}
-
 //Inicializaciones
 const app = express()
 dotenv.config()
@@ -28,10 +23,9 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
-
 app.use(fileUpload({
     useTempFiles : true,
-    tempFileDir : './uploads'
+    tempFileDir : '/tmp'   
 }))
 
 
