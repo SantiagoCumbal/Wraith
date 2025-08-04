@@ -4,54 +4,69 @@ import bcrypt from "bcryptjs"
 
 const jugadorSchema = new Schema({
     nombre:{
-        type:String,
-        required:true,
-        trim:true
-    },
-    apellido:{
-        type:String,
-        required:true,
-        trim:true
-    },
-    username:{
-        type:String,
-        trim:true,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true,
-        trim:true,
+    type:String,
+    required:true,
+    trim:true
+  },
+    
+  apellido:{
+    type:String,
+    required:false,
+    trim:true
+  },
+  username:{
+    type: String,
+  },
+    
+  email:{
+    type: String,    
 		unique:true
-    },
-    password:{
+  },
+  
+  password:{
+    type:String,
+    required: true
+  },
+  
+  avatarJugador:{
         type:String,
-        required:true
+        trim:true
     },
-    token:{
+    avatarJugadorID:{
         type:String,
-        default:null
+        trim:true
+    },
+    avatarJugadorIA:{
+        type:String,
+        trim:true
     },
 
-    rol:{
-        type:String,
-        default:"jugador"
-    },
-    status:{
-        type:Boolean,
-        default:true
-    },
-    confirmEmail:{
-        type:Boolean,
-        default:false
-    }
 
-},{
+  token:{
+    type:String,
+    default:null
+  },
+
+  rol:{
+    type:String,
+    default:"jugador"
+  },
+  
+  status:{
+    type:Boolean,
+    default:true
+  },
+    
+  confirmEmail:{
+    type:Boolean,
+    default:true
+
+  }},{
     timestamps:true
 })
 
 
-// Método para cifrar el password del veterinario
+// Método para cifrar el password del jugador
 jugadorSchema.methods.encrypPassword = async function(password){
     const salt = await bcrypt.genSalt(10)
     const passwordEncryp = await bcrypt.hash(password,salt)
