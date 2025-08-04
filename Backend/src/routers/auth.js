@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import passport from "passport";
-import { crearTokenJWT } from '../middlewares/JWT';
+import { crearTokenJWT } from '../middlewares/JWT.js';
 
 const router = Router();
 
