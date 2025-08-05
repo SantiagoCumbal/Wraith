@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "test": "jest"
   },
+  "jest": {}
+  ,
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -28,5 +31,11 @@
     "passport-google-oauth20": "^2.0.0",
     "socket.io": "^4.8.1",
     "stripe": "^18.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0",
+    "babel-jest": "^30.0.5",
+    "jest": "^30.0.5"
   }
 }

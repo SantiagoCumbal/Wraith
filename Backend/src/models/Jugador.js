@@ -59,7 +59,7 @@ const jugadorSchema = new Schema({
     
   confirmEmail:{
     type:Boolean,
-    default:true
+    default:false
 
   }},{
     timestamps:true
